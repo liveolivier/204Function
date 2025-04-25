@@ -24,12 +24,15 @@ namespace fnVignette
                 log.LogInformation($"Traitement de \n Nom:{name} \n Taille: {myBlob.Length} Bytes");
 
                 // Vérifier si le fichier est un JPG ou JPEG
-                if (!Path.GetExtension(name).Equals(".jpg", StringComparison.OrdinalIgnoreCase) &&
-                    !Path.GetExtension(name).Equals(".jpeg", StringComparison.OrdinalIgnoreCase))
+
+                String[] allowedExtensions = new[] { ".jpg", ".jpeg" };
+
+                if (!allowedExtensions.Contains(Path.GetExtension(name), StringComparer.OrdinalIgnoreCase))
                 {
-                    log.LogWarning($"Le fichier {name} ne sera pas traité car il n'est pas au format JPG ou JPEG.");
+                    log.LogWarning($"Le fichier {name} ne sera pas traité car il n'est pas dans un format autorisé.");
                     return;
                 }
+
 
                 // Charger et traiter l'image
                 using (var image = Image.Load(myBlob))
