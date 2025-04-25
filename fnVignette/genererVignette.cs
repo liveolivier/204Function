@@ -23,24 +23,25 @@ namespace fnVignette
 
                 log.LogInformation($"Traitement de \n Nom:{name} \n Taille: {myBlob.Length} Bytes");
 
-                // Vérifier si le fichier est un JPG
-                if (Path.GetExtension(name).Equals(".jpg", StringComparison.OrdinalIgnoreCase))
+                // Vérifier si le fichier est un JPG ou JPEG
+                if (!Path.GetExtension(name).Equals(".jpg", StringComparison.OrdinalIgnoreCase) &&
+                    !Path.GetExtension(name).Equals(".jpeg", StringComparison.OrdinalIgnoreCase))
                 {
-                    using (var image = Image.Load(myBlob))
-                    {
-                        image.Mutate(x => x.Resize(320, 320));
-                        image.SaveAsJpeg(outputBlob); // Sauvegarde au format PNG
-                        log.LogInformation($"Vignette de {name} créée en JPG.");
-                    }
+                    log.LogWarning($"Le fichier {name} ne sera pas traité car il n'est pas au format JPG ou JPEG.");
+                    return;
                 }
-                else
+
+                // Charger et traiter l'image
+                using (var image = Image.Load(myBlob))
                 {
-                    log.LogWarning($"Le fichier {name} ne sera pas traité car non jpg.");
+                    image.Mutate(x => x.Resize(320, 320));
+                    image.SaveAsJpeg(outputBlob); // Sauvegarde au format JPG
+                    log.LogInformation($"Vignette de {name} créée en JPG.");
                 }
             }
             catch (Exception ex)
             {
-                log.LogError($"AErreur lors de la conversion de {name}: {ex.Message}");
+                log.LogError($"Erreur lors de la conversion de {name}: {ex.Message}");
             }
         }
     }
